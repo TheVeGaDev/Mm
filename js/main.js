@@ -1,4 +1,4 @@
-// تهيئة التطبيق
+// main.js - الدوال الأساسية للتطبيق
 document.addEventListener('DOMContentLoaded', function() {
     initApp();
 });
@@ -13,11 +13,11 @@ function initApp() {
     // تهيئة المراحل التعليمية
     initGradeCards();
     
-    // تهيئة النظام
-    initTheme();
-    
     // التحقق من حالة المصادقة
     checkAuthStatus();
+    
+    // تهيئة الموديلات
+    initModals();
 }
 
 // القائمة المتنقلة
@@ -41,19 +41,24 @@ function initNavigation() {
 
 // تأثيرات التمرير
 function initScrollEffects() {
-    const fadeElements = document.querySelectorAll('.fade-in');
-    
+    // إضافة كلاس للعناصر التي تظهر عند التمرير
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
+                entry.target.classList.add('fade-in-visible');
             }
         });
-    }, {
-        threshold: 0.1
-    });
+    }, observerOptions);
 
-    fadeElements.forEach(el => observer.observe(el));
+    // مراقبة جميع العناصر التي تحتوي على كلاس fade-in
+    document.querySelectorAll('.fade-in').forEach(el => {
+        observer.observe(el);
+    });
 }
 
 // كروت المراحل التعليمية
@@ -61,9 +66,26 @@ function initGradeCards() {
     const gradeCards = document.querySelectorAll('.grade-card');
     
     gradeCards.forEach(card => {
-        card.addEventListener('click', function() {
-            const grade = this.getAttribute('data-grade');
-            selectGrade(grade);
+        card.addEventListener('click', function(e) {
+            // منع التنشيط عند النقر على الزر مباشرة
+            if (e.target.classList.contains('card-btn')) return;
+            
+            this.classList.toggle('flipped');
+        });
+    });
+}
+
+// تهيئة الموديلات
+function initModals() {
+    // إغلاق الموديلات بالنقر خارجها
+    window.addEventListener('click', function(event) {
+        const modals = ['loginModal', 'registerModal', 'uploadModal', 'addAdminModal', 'editVideoModal'];
+        
+        modals.forEach(modalId => {
+            const modal = document.getElementById(modalId);
+            if (modal && event.target === modal) {
+                modal.style.display = 'none';
+            }
         });
     });
 }
@@ -90,108 +112,12 @@ function selectGrade(grade) {
     showNotification(`تم اختيار مرحلة ${gradeNames[grade]}`, 'success');
 }
 
-// عرض الإشعارات
-function showNotification(message, type = 'info') {
-    // إنصراف إذا كان في لوحة التحكم
-    if (window.location.pathname.includes('dashboard')) {
-        return;
+// التمرير إلى قسم الدورات
+function scrollToCourses() {
+    const coursesSection = document.getElementById('courses');
+    if (coursesSection) {
+        coursesSection.scrollIntoView({ behavior: 'smooth' });
     }
-
-    const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-    notification.innerHTML = `
-        <div class="notification-content">
-            <i class="fas fa-${getNotificationIcon(type)}"></i>
-            <span>${message}</span>
-        </div>
-    `;
-    
-    // إضافة الأنيميشن
-    notification.style.cssText = `
-        position: fixed;
-        top: 100px;
-        left: 50%;
-        transform: translateX(-50%) translateY(-20px);
-        background: ${getNotificationColor(type)};
-        color: white;
-        padding: 1rem 2rem;
-        border-radius: 10px;
-        box-shadow: var(--shadow-lg);
-        z-index: 3000;
-        opacity: 0;
-        transition: all 0.3s ease;
-    `;
-    
-    document.body.appendChild(notification);
-    
-    // إظهار الإشعار
-    setTimeout(() => {
-        notification.style.opacity = '1';
-        notification.style.transform = 'translateX(-50%) translateY(0)';
-    }, 100);
-    
-    // إخفاء الإشعار بعد 3 ثوان
-    setTimeout(() => {
-        notification.style.opacity = '0';
-        notification.style.transform = 'translateX(-50%) translateY(-20px)';
-        setTimeout(() => {
-            if (document.body.contains(notification)) {
-                document.body.removeChild(notification);
-            }
-        }, 300);
-    }, 3000);
-}
-
-function getNotificationIcon(type) {
-    const icons = {
-        'success': 'check-circle',
-        'error': 'exclamation-circle',
-        'info': 'info-circle',
-        'warning': 'exclamation-triangle'
-    };
-    return icons[type] || 'info-circle';
-}
-
-function getNotificationColor(type) {
-    const colors = {
-        'success': '#4caf50',
-        'error': '#f44336', 
-        'info': '#2196f3',
-        'warning': '#ff9800'
-    };
-    return colors[type] || '#2196f3';
-}
-
-// النظام
-function initTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-}
-
-function toggleTheme() {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-}
-
-// التحكم في الفيديوهات
-function playVideo(videoId) {
-    // هنا سيتم دمج مشغل الفيديو
-    showNotification('جاري تحميل الفيديو...', 'info');
-}
-
-// إدارة التقدم
-function updateProgress(lessonId, progress) {
-    const userProgress = JSON.parse(localStorage.getItem('userProgress')) || {};
-    userProgress[lessonId] = progress;
-    localStorage.setItem('userProgress', JSON.stringify(userProgress));
-}
-
-function getProgress(lessonId) {
-    const userProgress = JSON.parse(localStorage.getItem('userProgress')) || {};
-    return userProgress[lessonId] || 0;
 }
 
 // فتح وإغلاق الموديلات
@@ -235,86 +161,155 @@ function switchToRegister() {
     openRegisterModal();
 }
 
-// إغلاق الموديلات بالنقر خارجها
-window.addEventListener('click', function(event) {
-    const loginModal = document.getElementById('loginModal');
-    const registerModal = document.getElementById('registerModal');
-    
-    if (event.target === loginModal) {
-        closeLoginModal();
-    }
-    if (event.target === registerModal) {
-        closeRegisterModal();
-    }
-});
-
 // تسجيل الخروج
 function logout() {
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('userProgress');
+    storage.setCurrentUser(null);
     window.location.href = 'index.html';
 }
 
 // التحقق من حالة تسجيل الدخول
 function checkAuthStatus() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const authButtons = document.querySelector('.auth-buttons');
+    const currentUser = storage.getCurrentUser();
+    const authButtons = document.getElementById('authButtons');
     
     if (currentUser && authButtons) {
         authButtons.innerHTML = `
             <div class="user-menu">
                 <span>مرحباً، ${currentUser.fullName}</span>
-                <button class="btn-logout" onclick="logout()">تسجيل الخروج</button>
+                <div class="user-dropdown">
+                    <button class="btn-profile" onclick="goToDashboard()">
+                        <i class="fas fa-tachometer-alt"></i>
+                        لوحة التحكم
+                    </button>
+                    <button class="btn-logout" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        تسجيل الخروج
+                    </button>
+                </div>
             </div>
         `;
     }
 }
 
-// تحميل بيانات المستخدم في لوحة التحكم
-function loadUserData() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+// الذهاب إلى لوحة التحكم المناسبة
+function goToDashboard() {
+    const currentUser = storage.getCurrentUser();
     if (currentUser) {
-        // تحديث الاسم في لوحة التحكم
-        const studentName = document.getElementById('studentName');
-        if (studentName) {
-            studentName.textContent = currentUser.fullName;
-        }
-        
-        // تحديث المرحلة التعليمية
-        const userGrade = document.querySelector('.profile-section p');
-        if (userGrade && currentUser.grade) {
-            const gradeNames = {
-                'first': 'أولى ثانوي',
-                'second': 'ثانية ثانوي',
-                'third': 'ثالثة ثانوي'
-            };
-            userGrade.textContent = `طالب - ${gradeNames[currentUser.grade]}`;
+        if (currentUser.role === 'admin') {
+            window.location.href = 'dashboard.html';
+        } else {
+            window.location.href = 'student-dashboard.html';
         }
     }
 }
 
-// تهيئة لوحة التحكم
-function initDashboard() {
-    loadUserData();
+// عرض الإشعارات
+function showNotification(message, type = 'info') {
+    // إنشاء عنصر الإشعار
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas fa-${getNotificationIcon(type)}"></i>
+            <span>${message}</span>
+        </div>
+        <button class="notification-close" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
     
-    // تهيئة التنقل في لوحة التحكم
-    const navItems = document.querySelectorAll('.dashboard-nav .nav-item');
-    navItems.forEach(item => {
-        item.addEventListener('click', function() {
-            navItems.forEach(nav => nav.classList.remove('active'));
-            this.classList.add('active');
-            
-            // إخفاء جميع الأقسام
-            document.querySelectorAll('.dashboard-section').forEach(section => {
-                section.style.display = 'none';
-            });
-            
-            // إظهار القسم المحدد
-            const targetId = this.getAttribute('href').substring(1);
-            const targetSection = document.getElementById(targetId);
-            if (targetSection) {
-                targetSection.style.display = 'block';
+    // إضافة الأنيميشن
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(-100px);
+        background: ${getNotificationColor(type)};
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        min-width: 300px;
+        max-width: 90vw;
+        transition: all 0.3s ease;
+    `;
+    
+    // إضافة زر الإغلاق
+    notification.querySelector('.notification-close').style.cssText = `
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+        padding: 0.2rem;
+        margin-right: auto;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // إظهار الإشعار
+    setTimeout(() => {
+        notification.style.transform = 'translateX(-50%) translateY(0)';
+    }, 100);
+    
+    // إخفاء الإشعار تلقائياً بعد 5 ثوان (ما عدا الأخطاء)
+    if (type !== 'error') {
+        setTimeout(() => {
+            if (document.body.contains(notification)) {
+                notification.style.transform = 'translateX(-50%) translateY(-100px)';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
             }
-        });
-    });
+        }, 5000);
+    }
+    
+    return notification;
+}
+
+function getNotificationIcon(type) {
+    const icons = {
+        'success': 'check-circle',
+        'error': 'exclamation-circle',
+        'info': 'info-circle',
+        'warning': 'exclamation-triangle'
+    };
+    return icons[type] || 'info-circle';
+}
+
+function getNotificationColor(type) {
+    const colors = {
+        'success': '#4caf50',
+        'error': '#f44336', 
+        'info': '#2196f3',
+        'warning': '#ff9800'
+    };
+    return colors[type] || '#2196f3';
+}
+
+// دوال مساعدة
+function getGradeName(grade) {
+    const grades = {
+        'first': 'أولى ثانوي',
+        'second': 'ثانية ثانوي',
+        'third': 'ثالثة ثانوي'
+    };
+    return grades[grade] || 'غير محدد';
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'غير محدد';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ar-EG');
+}
+
+// التحقق من الصلاحيات
+function checkPermission(requiredRole) {
+    const currentUser = storage.getCurrentUser();
+    return currentUser && currentUser.role === requiredRole;
 }

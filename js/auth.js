@@ -1,7 +1,4 @@
-// إدارة المصادقة
-let currentUser = null;
-
-// نماذج المصادقة
+// auth.js - إدارة المصادقة
 document.addEventListener('DOMContentLoaded', function() {
     const registerForm = document.getElementById('registerForm');
     const loginForm = document.getElementById('loginForm');
@@ -47,18 +44,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // إنشاء أدمن افتراضي
 function createDefaultAdmin() {
-    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const users = storage.getUsers();
     const adminExists = users.find(user => user.role === 'admin');
     
     if (!adminExists) {
         const defaultAdmin = {
-            id: 'admin_001',
+            id: 'admin_' + Date.now(),
             fullName: 'مدير النظام',
             email: 'admin@themaster.com',
             password: 'admin123',
             role: 'admin',
             createdAt: new Date().toISOString(),
-            subscription: { status: 'active' }
+            subscription: { 
+                status: 'active',
+                plan: 'premium',
+                startDate: new Date().toISOString(),
+                endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+            }
         };
         users.push(defaultAdmin);
         localStorage.setItem('users', JSON.stringify(users));
@@ -126,7 +128,7 @@ function validatePhone(phone) {
 
 // تسجيل المستخدم
 function registerUser(userData) {
-    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const users = storage.getUsers();
     
     // التحقق من عدم وجود مستخدم بنفس البريد الإلكتروني
     if (users.find(user => user.email === userData.email)) {
@@ -136,14 +138,15 @@ function registerUser(userData) {
     
     // إضافة المستخدم
     const newUser = {
-        id: generateId(),
+        id: 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
         ...userData,
         createdAt: new Date().toISOString(),
         subscription: {
             status: 'inactive',
             plan: null,
             startDate: null,
-            endDate: null
+            endDate: null,
+            features: []
         },
         progress: {}
     };
@@ -160,12 +163,11 @@ function registerUser(userData) {
 
 // تسجيل الدخول
 function loginUser(credentials) {
-    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const users = storage.getUsers();
     const user = users.find(u => u.email === credentials.email && u.password === credentials.password);
     
     if (user) {
-        currentUser = user;
-        localStorage.setItem('currentUser', JSON.stringify(user));
+        storage.setCurrentUser(user);
         
         showNotification(`مرحباً بعودتك، ${user.fullName}!`, 'success');
         closeLoginModal();
@@ -183,19 +185,8 @@ function loginUser(credentials) {
     }
 }
 
-// إنشاء معرف فريد
-function generateId() {
-    return 'user_' + Math.random().toString(36).substr(2, 9);
-}
-
-// التحقق من الصلاحيات
-function checkPermission(requiredRole) {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    return currentUser && currentUser.role === requiredRole;
-}
-
 // التحقق من الاشتراك النشط
 function checkSubscription() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const currentUser = storage.getCurrentUser();
     return currentUser && currentUser.subscription && currentUser.subscription.status === 'active';
 }

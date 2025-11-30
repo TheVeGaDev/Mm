@@ -6,17 +6,19 @@ class StorageManager {
 
     init() {
         // تهيئة الهياكل الأساسية إذا لم تكن موجودة
-        if (!localStorage.getItem('users')) {
-            localStorage.setItem('users', JSON.stringify([]));
-        }
-        if (!localStorage.getItem('videos')) {
-            localStorage.setItem('videos', JSON.stringify([]));
-        }
-        if (!localStorage.getItem('subscriptions')) {
-            localStorage.setItem('subscriptions', JSON.stringify([]));
-        }
-        if (!localStorage.getItem('payments')) {
-            localStorage.setItem('payments', JSON.stringify([]));
+        const structures = {
+            'users': [],
+            'videos': [],
+            'subscriptions': [],
+            'payments': [],
+            'notifications': [],
+            'userProgress': {}
+        };
+
+        for (const [key, defaultValue] of Object.entries(structures)) {
+            if (!localStorage.getItem(key)) {
+                localStorage.setItem(key, JSON.stringify(defaultValue));
+            }
         }
     }
 
@@ -37,6 +39,12 @@ class StorageManager {
         
         localStorage.setItem('users', JSON.stringify(users));
         return user;
+    }
+
+    deleteUser(userId) {
+        const users = this.getUsers();
+        const updatedUsers = users.filter(user => user.id !== userId);
+        localStorage.setItem('users', JSON.stringify(updatedUsers));
     }
 
     // إدارة الفيديوهات
@@ -95,6 +103,24 @@ class StorageManager {
         return payment;
     }
 
+    // إدارة التقدم
+    getUserProgress() {
+        return JSON.parse(localStorage.getItem('userProgress')) || {};
+    }
+
+    saveUserProgress(progress) {
+        localStorage.setItem('userProgress', JSON.stringify(progress));
+    }
+
+    updateVideoProgress(userId, videoId, progress) {
+        const userProgress = this.getUserProgress();
+        if (!userProgress[userId]) {
+            userProgress[userId] = {};
+        }
+        userProgress[userId][videoId] = progress;
+        this.saveUserProgress(userProgress);
+    }
+
     // الحصول على فيديوهات حسب المرحلة
     getVideosByGrade(grade) {
         const videos = this.getVideos();
@@ -107,18 +133,25 @@ class StorageManager {
         return users.filter(user => user.role === 'student' && user.grade === grade);
     }
 
-    // تحديث تقدم الطالب
-    updateStudentProgress(studentId, videoId, progress) {
-        const users = this.getUsers();
-        const userIndex = users.findIndex(u => u.id === studentId);
-        
-        if (userIndex >= 0) {
-            if (!users[userIndex].progress) {
-                users[userIndex].progress = {};
-            }
-            users[userIndex].progress[videoId] = progress;
-            localStorage.setItem('users', JSON.stringify(users));
+    // البحث عن المستخدم الحالي
+    getCurrentUser() {
+        return JSON.parse(localStorage.getItem('currentUser')) || null;
+    }
+
+    // حفظ المستخدم الحالي
+    setCurrentUser(user) {
+        if (user) {
+            localStorage.setItem('currentUser', JSON.stringify(user));
+        } else {
+            localStorage.removeItem('currentUser');
         }
+    }
+
+    // تنظيف البيانات (للتطوير)
+    clearAll() {
+        const keys = ['users', 'videos', 'subscriptions', 'payments', 'notifications', 'userProgress', 'currentUser'];
+        keys.forEach(key => localStorage.removeItem(key));
+        this.init();
     }
 }
 

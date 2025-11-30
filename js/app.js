@@ -20,7 +20,7 @@ class TheMasterApp {
 
     initAuth() {
         // التحقق من تسجيل الدخول
-        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const currentUser = storage.getCurrentUser();
         if (currentUser) {
             console.log(`✅ مستخدم مسجل: ${currentUser.fullName}`);
         }
@@ -34,8 +34,10 @@ class TheMasterApp {
 
     initNotifications() {
         // إنشاء الإشعارات التلقائية
-        notificationSystem.createAutomaticNotifications();
-        console.log('✅ نظام الإشعارات جاهز');
+        if (typeof notificationSystem !== 'undefined') {
+            notificationSystem.createAutomaticNotifications();
+            console.log('✅ نظام الإشعارات جاهز');
+        }
     }
 
     initUI() {
@@ -57,13 +59,15 @@ class TheMasterApp {
                     updated = true;
                     
                     // إرسال إشعار انتهاء الاشتراك
-                    notificationSystem.sendNotification(
-                        user.id,
-                        'انتهاء الاشتراك',
-                        'انتهت مدة اشتراكك. قم بتجديده للاستمرار في الوصول للدورات.',
-                        'error',
-                        'subscription.html'
-                    );
+                    if (typeof notificationSystem !== 'undefined') {
+                        notificationSystem.sendNotification(
+                            user.id,
+                            'انتهاء الاشتراك',
+                            'انتهت مدة اشتراكك. قم بتجديده للاستمرار في الوصول للدورات.',
+                            'error',
+                            'student-dashboard.html#subscription'
+                        );
+                    }
                 }
             }
         });
@@ -75,7 +79,7 @@ class TheMasterApp {
 
     updateUserInterface() {
         // تحديث واجهة المستخدم بناءً على حالة المستخدم
-        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const currentUser = storage.getCurrentUser();
         const authButtons = document.querySelector('.auth-buttons');
         
         if (currentUser && authButtons) {
@@ -153,20 +157,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// دوال مساعدة إضافية
-function goToDashboard() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (currentUser) {
-        if (currentUser.role === 'admin') {
-            window.location.href = 'dashboard.html';
-        } else {
-            window.location.href = 'student-dashboard.html';
-        }
-    }
-}
-
+// بدء الاشتراك
 function startSubscription(planType) {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const currentUser = storage.getCurrentUser();
     
     if (!currentUser) {
         showNotification('يجب تسجيل الدخول أولاً', 'error');
