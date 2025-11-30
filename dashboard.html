@@ -34,9 +34,9 @@
                     <i class="fas fa-users"></i>
                     إدارة الطلاب
                 </a>
-                <a href="#settings" class="nav-item">
-                    <i class="fas fa-cog"></i>
-                    الإعدادات
+                <a href="#admins" class="nav-item">
+                    <i class="fas fa-user-shield"></i>
+                    إدارة الأدمن
                 </a>
             </nav>
         </aside>
@@ -56,16 +56,32 @@
             <!-- بطاقات الإحصائيات -->
             <div class="stats-grid">
                 <div class="stat-card students">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
                     <h5>إجمالي الطلاب</h5>
                     <h3 id="totalStudents">0</h3>
                 </div>
                 <div class="stat-card courses">
+                    <div class="stat-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
                     <h5>الفيديوهات المرفوعة</h5>
                     <h3 id="totalVideos">0</h3>
                 </div>
                 <div class="stat-card revenue">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-check"></i>
+                    </div>
                     <h5>المشتركين النشطين</h5>
                     <h3 id="activeSubscriptions">0</h3>
+                </div>
+                <div class="stat-card admins">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <h5>عدد الأدمن</h5>
+                    <h3 id="totalAdmins">0</h3>
                 </div>
             </div>
 
@@ -91,6 +107,20 @@
                 </div>
                 <div class="students-list" id="studentsList">
                     <!-- سيتم تعبئة الطلاب ديناميكياً -->
+                </div>
+            </section>
+
+            <!-- قسم إدارة الأدمن -->
+            <section class="videos-section">
+                <div class="section-header">
+                    <h2>إدارة الأدمن</h2>
+                    <button class="btn-upload" onclick="openAddAdminModal()">
+                        <i class="fas fa-user-plus"></i>
+                        إضافة أدمن جديد
+                    </button>
+                </div>
+                <div class="admins-list" id="adminsList">
+                    <!-- سيتم تعبئة الأدمنز ديناميكياً -->
                 </div>
             </section>
         </main>
@@ -126,6 +156,63 @@
                 <button type="submit" class="btn-primary">
                     <i class="fas fa-upload"></i>
                     رفع الفيديو
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- موديل إضافة أدمن -->
+    <div id="addAdminModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddAdminModal()">&times;</span>
+            <h2>إضافة أدمن جديد</h2>
+            <form id="addAdminForm" class="upload-form">
+                <div class="form-group">
+                    <label for="adminName">اسم الأدمن</label>
+                    <input type="text" id="adminName" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminEmail">البريد الإلكتروني</label>
+                    <input type="email" id="adminEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminPassword">كلمة المرور</label>
+                    <input type="password" id="adminPassword" required>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-user-plus"></i>
+                    إضافة أدمن
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- موديل تعديل الفيديو -->
+    <div id="editVideoModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditVideoModal()">&times;</span>
+            <h2>تعديل الفيديو</h2>
+            <form id="editVideoForm" class="upload-form" onsubmit="saveVideoEdit(event)">
+                <input type="hidden" id="editVideoId">
+                <div class="form-group">
+                    <label for="editVideoTitle">عنوان الفيديو</label>
+                    <input type="text" id="editVideoTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="editVideoGrade">المرحلة التعليمية</label>
+                    <select id="editVideoGrade" required>
+                        <option value="first">أولى ثانوي</option>
+                        <option value="second">ثانية ثانوي</option>
+                        <option value="third">ثالثة ثانوي</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editVideoDescription">وصف الفيديو</label>
+                    <textarea id="editVideoDescription" rows="4"></textarea>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-save"></i>
+                    حفظ التعديلات
                 </button>
             </form>
         </div>

@@ -22,7 +22,7 @@
                     <li><a href="#courses">الدورات</a></li>
                     <li><a href="#about">عن الدكتور</a></li>
                     <li><a href="#contact">اتصل بنا</a></li>
-                    <li class="auth-buttons">
+                    <li class="auth-buttons" id="authButtons">
                         <button class="btn-login" onclick="openLoginModal()">تسجيل الدخول</button>
                         <button class="btn-register" onclick="openRegisterModal()">إنشاء حساب</button>
                     </li>
@@ -38,39 +38,45 @@
         <div class="hero-content">
             <div class="hero-text">
                 <h2>إتقان الإنجليزية <span class="highlight">بلمسة الماستر</span></h2>
-                <p>مع د. سالم رمضان - مدرس أول اللغة الإنجليزية بمحافظة المنيا</p>
+                <p>انضم إلى آلاف الطلاب الناجحين مع د. سالم رمضان - خبير اللغة الإنجليزية</p>
                 <div class="cta-buttons">
-                    <button class="btn-primary" onclick="openRegisterModal()">ابدأ رحلتك الآن</button>
-                    <button class="btn-secondary">شاهد عينات مجانية</button>
+                    <button class="btn-primary" onclick="openRegisterModal()">
+                        <i class="fas fa-rocket"></i>
+                        ابدأ رحلتك الآن
+                    </button>
+                    <button class="btn-secondary" onclick="scrollToCourses()">
+                        <i class="fas fa-play-circle"></i>
+                        شاهد العينات المجانية
+                    </button>
                 </div>
-                <div class="hero-stats">
-                    <div class="stat">
-                        <h3>١,٢٥٠+</h3>
-                        <p>طالب نشط</p>
+                <div class="hero-features">
+                    <div class="feature">
+                        <i class="fas fa-video"></i>
+                        <span>فيديوهات تعليمية متخصصة</span>
                     </div>
-                    <div class="stat">
-                        <h3>٩٨٪</h3>
-                        <p>معدل النجاح</p>
+                    <div class="feature">
+                        <i class="fas fa-chart-line"></i>
+                        <span>تتبع تقدمك الدراسي</span>
                     </div>
-                    <div class="stat">
-                        <h3>٥٠٠+</h3>
-                        <p>فيديو تعليمي</p>
+                    <div class="feature">
+                        <i class="fas fa-user-tie"></i>
+                        <span>شرح مباشر من الخبير</span>
                     </div>
                 </div>
             </div>
             <div class="hero-image">
-                <div class="floating-cards">
-                    <div class="floating-card card-1">
+                <div class="hero-illustration">
+                    <div class="floating-element element-1">
                         <i class="fas fa-graduation-cap"></i>
-                        <span>أولى ثانوي</span>
                     </div>
-                    <div class="floating-card card-2">
-                        <i class="fas fa-book"></i>
-                        <span>ثانية ثانوي</span>
-                    </div>
-                    <div class="floating-card card-3">
+                    <div class="floating-element element-2">
                         <i class="fas fa-trophy"></i>
-                        <span>ثالثة ثانوي</span>
+                    </div>
+                    <div class="floating-element element-3">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="main-illustration">
+                        <i class="fas fa-laptop-code"></i>
                     </div>
                 </div>
             </div>
@@ -81,26 +87,32 @@
     <section class="grades-section" id="courses">
         <div class="container">
             <h2 class="section-title">اختر مسار تعلمك</h2>
+            <p class="section-subtitle">دورات متكاملة تغطي جميع احتياجاتك التعليمية</p>
+            
             <div class="grades-cards">
                 <div class="grade-card" data-grade="first">
                     <div class="card-inner">
                         <div class="card-front">
                             <div class="card-icon">
-                                <i class="fas fa-rocket"></i>
+                                <i class="fas fa-seedling"></i>
                             </div>
                             <h3>أولى ثانوي</h3>
                             <p>بناء الأساس المتين</p>
-                            <div class="card-badge">جديد</div>
+                            <div class="card-badge">مبتدئ</div>
                         </div>
                         <div class="card-back">
                             <h4>مميزات المسار</h4>
                             <ul>
-                                <li>🔹 تأسيس قوي في القواعد</li>
-                                <li>🔹 مفردات أساسية</li>
-                                <li>🔹 محادثات يومية</li>
-                                <li>🔹 اختبارات دورية</li>
+                                <li>✅ تأسيس قوي في القواعد</li>
+                                <li>✅ مفردات أساسية وشائعة</li>
+                                <li>✅ محادثات يومية عملية</li>
+                                <li>✅ تمارين تفاعلية</li>
+                                <li>✅ اختبارات تقييمية</li>
                             </ul>
-                            <button class="card-btn" onclick="selectGrade('first')">اختر هذا المسار</button>
+                            <button class="card-btn" onclick="selectGrade('first')">
+                                <i class="fas fa-play"></i>
+                                ابدأ التعلم
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -113,17 +125,21 @@
                             </div>
                             <h3>ثانية ثانوي</h3>
                             <p>التطور والتميز</p>
-                            <div class="card-badge">الأكثر طلباً</div>
+                            <div class="card-badge">متوسط</div>
                         </div>
                         <div class="card-back">
                             <h4>مميزات المسار</h4>
                             <ul>
-                                <li>🔹 قواعد متقدمة</li>
-                                <li>🔹 كتابة المقالات</li>
-                                <li>🔹 فهم النصوص</li>
-                                <li>🔹 تحليل النصوص</li>
+                                <li>✅ قواعد متقدمة وشاملة</li>
+                                <li>✅ كتابة المقالات والتقارير</li>
+                                <li>✅ فهم النصوص المعقدة</li>
+                                <li>✅ تحليل النصوص الأدبية</li>
+                                <li>✅ إستراتيجيات الامتحانات</li>
                             </ul>
-                            <button class="card-btn" onclick="selectGrade('second')">اختر هذا المسار</button>
+                            <button class="card-btn" onclick="selectGrade('second')">
+                                <i class="fas fa-play"></i>
+                                ابدأ التعلم
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -136,19 +152,60 @@
                             </div>
                             <h3>ثالثة ثانوي</h3>
                             <p>التحضير للثانوية</p>
-                            <div class="card-badge">مكثف</div>
+                            <div class="card-badge">متقدم</div>
                         </div>
                         <div class="card-back">
                             <h4>مميزات المسار</h4>
                             <ul>
-                                <li>🔹 مراجعة شاملة</li>
-                                <li>🔹 امتحانات سابقة</li>
-                                <li>🔹 نماذج متوقعة</li>
-                                <li>🔹 إستراتيجيات الحل</li>
+                                <li>✅ مراجعة شاملة للمناهج</li>
+                                <li>✅ حل امتحانات سابقة</li>
+                                <li>✅ نماذج متوقعة للثانوية</li>
+                                <li>✅ إستراتيجيات الحل السريع</li>
+                                <li>✅ نصائح التميز والتفوق</li>
                             </ul>
-                            <button class="card-btn" onclick="selectGrade('third')">اختر هذا المسار</button>
+                            <button class="card-btn" onclick="selectGrade('third')">
+                                <i class="fas fa-play"></i>
+                                ابدأ التعلم
+                            </button>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم المميزات -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="section-title">لماذا تختار THE MASTER؟</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h3>خبرة ١٥ عاماً</h3>
+                    <p>د. سالم رمضان - مدرس أول اللغة الإنجليزية بمحافظة المنيا</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3>فيديوهات عالية الجودة</h3>
+                    <p>شرح واضح ومباشر بجودة عالية تفاعلية</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>منصة متجاوبة</h3>
+                    <p>استمتع بالتعلم على جميع الأجهزة بشكل سلس</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>تتبع التقدم</h3>
+                    <p>تابع تقدمك التعليمي خطوة بخطوة</p>
                 </div>
             </div>
         </div>
@@ -158,27 +215,27 @@
     <div id="registerModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeRegisterModal()">&times;</span>
-            <h2>إنشاء حساب جديد</h2>
+            <h2>انضم إلى عائلة MASTER</h2>
             <form id="registerForm" class="auth-form">
                 <div class="form-group">
                     <label for="fullName">الاسم الكامل</label>
-                    <input type="text" id="fullName" name="fullName" required>
+                    <input type="text" id="fullName" name="fullName" required placeholder="أدخل اسمك الثلاثي">
                 </div>
                 <div class="form-group">
                     <label for="email">البريد الإلكتروني</label>
-                    <input type="email" id="email" name="email" required>
+                    <input type="email" id="email" name="email" required placeholder="example@email.com">
                 </div>
                 <div class="form-group">
                     <label for="password">كلمة المرور</label>
-                    <input type="password" id="password" name="password" required>
+                    <input type="password" id="password" name="password" required placeholder="6 أحرف على الأقل">
                 </div>
                 <div class="form-group">
                     <label for="studentPhone">رقم هاتف الطالب</label>
-                    <input type="tel" id="studentPhone" name="studentPhone" required>
+                    <input type="tel" id="studentPhone" name="studentPhone" required placeholder="01XXXXXXXXX">
                 </div>
                 <div class="form-group">
                     <label for="parentPhone">رقم هاتف ولي الأمر</label>
-                    <input type="tel" id="parentPhone" name="parentPhone" required>
+                    <input type="tel" id="parentPhone" name="parentPhone" required placeholder="01XXXXXXXXX">
                 </div>
                 <div class="form-group">
                     <label for="grade">المرحلة التعليمية</label>
@@ -189,7 +246,10 @@
                         <option value="third">ثالثة ثانوي</option>
                     </select>
                 </div>
-                <button type="submit" class="btn-primary">إنشاء الحساب</button>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-user-plus"></i>
+                    إنشاء الحساب
+                </button>
             </form>
             <p class="auth-link">
                 لديك حساب بالفعل؟ <a href="#" onclick="switchToLogin()">سجل الدخول</a>
@@ -201,17 +261,20 @@
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeLoginModal()">&times;</span>
-            <h2>تسجيل الدخول</h2>
+            <h2>مرحباً بعودتك!</h2>
             <form id="loginForm" class="auth-form">
                 <div class="form-group">
                     <label for="loginEmail">البريد الإلكتروني</label>
-                    <input type="email" id="loginEmail" name="email" required>
+                    <input type="email" id="loginEmail" name="email" required placeholder="example@email.com">
                 </div>
                 <div class="form-group">
                     <label for="loginPassword">كلمة المرور</label>
-                    <input type="password" id="loginPassword" name="password" required>
+                    <input type="password" id="loginPassword" name="password" required placeholder="أدخل كلمة المرور">
                 </div>
-                <button type="submit" class="btn-primary">تسجيل الدخول</button>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    تسجيل الدخول
+                </button>
             </form>
             <p class="auth-link">
                 ليس لديك حساب؟ <a href="#" onclick="switchToRegister()">إنشاء حساب جديد</a>
@@ -228,7 +291,7 @@
                         <h2>THE MASTER</h2>
                         <span>د. سالم رمضان</span>
                     </div>
-                    <p>منصة تعليمية متخصصة في اللغة الإنجليزية للمرحلة الثانوية</p>
+                    <p>منصة تعليمية متخصصة في اللغة الإنجليزية للمرحلة الثانوية، نقدم أفضل الطرق الحديثة في التعليم</p>
                 </div>
                 <div class="footer-section">
                     <h3>روابط سريعة</h3>
@@ -236,6 +299,7 @@
                         <li><a href="#home">الرئيسية</a></li>
                         <li><a href="#courses">الدورات</a></li>
                         <li><a href="#about">عن الدكتور</a></li>
+                        <li><a href="#contact">اتصل بنا</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -245,6 +309,14 @@
                         <li><i class="fas fa-envelope"></i> info@themaster.com</li>
                         <li><i class="fas fa-map-marker-alt"></i> المنيا، مصر</li>
                     </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>تابعنا</h3>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
                 </div>
             </div>
             <div class="footer-bottom">
