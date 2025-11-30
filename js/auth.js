@@ -16,7 +16,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 password: document.getElementById('password').value,
                 studentPhone: document.getElementById('studentPhone').value,
                 parentPhone: document.getElementById('parentPhone').value,
-                grade: document.getElementById('grade').value
+                grade: document.getElementById('grade').value,
+                role: 'student' // دور افتراضي
             };
             
             if (validateRegistration(formData)) {
@@ -39,7 +40,30 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // إنشاء مستخدم أدمن افتراضي إذا لم يكن موجود
+    createDefaultAdmin();
 });
+
+// إنشاء أدمن افتراضي
+function createDefaultAdmin() {
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const adminExists = users.find(user => user.role === 'admin');
+    
+    if (!adminExists) {
+        const defaultAdmin = {
+            id: 'admin_001',
+            fullName: 'مدير النظام',
+            email: 'admin@themaster.com',
+            password: 'admin123',
+            role: 'admin',
+            createdAt: new Date().toISOString(),
+            subscription: { status: 'active' }
+        };
+        users.push(defaultAdmin);
+        localStorage.setItem('users', JSON.stringify(users));
+    }
+}
 
 // التحقق من صحة البيانات
 function validateRegistration(data) {
@@ -102,7 +126,6 @@ function validatePhone(phone) {
 
 // تسجيل المستخدم
 function registerUser(userData) {
-    // في التطبيق الحقيقي، هنا سيتم الاتصال بالخادم
     const users = JSON.parse(localStorage.getItem('users')) || [];
     
     // التحقق من عدم وجود مستخدم بنفس البريد الإلكتروني
@@ -122,8 +145,7 @@ function registerUser(userData) {
             startDate: null,
             endDate: null
         },
-        progress: {},
-        role: 'student'
+        progress: {}
     };
     
     users.push(newUser);
@@ -150,7 +172,7 @@ function loginUser(credentials) {
         
         // إعادة التوجيه إلى لوحة التحكم المناسبة
         setTimeout(() => {
-            if (user.role === 'teacher') {
+            if (user.role === 'admin') {
                 window.location.href = 'dashboard.html';
             } else {
                 window.location.href = 'student-dashboard.html';
