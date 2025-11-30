@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - THE MASTER</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- الشريط الجانبي -->
+        <aside class="sidebar">
+            <div class="profile-section">
+                <div class="avatar">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <h4>د. سالم رمضان</h4>
+                <p>مدرس أول اللغة الإنجليزية</p>
+            </div>
+
+            <nav class="dashboard-nav">
+                <a href="#overview" class="nav-item active">
+                    <i class="fas fa-chart-line"></i>
+                    نظرة عامة
+                </a>
+                <a href="#videos" class="nav-item">
+                    <i class="fas fa-video"></i>
+                    إدارة الفيديوهات
+                </a>
+                <a href="#students" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    إدارة الطلاب
+                </a>
+                <a href="#analytics" class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    الإحصائيات
+                </a>
+                <a href="#payments" class="nav-item">
+                    <i class="fas fa-credit-card"></i>
+                    المدفوعات
+                </a>
+                <a href="#notifications" class="nav-item">
+                    <i class="fas fa-bell"></i>
+                    الإشعارات
+                </a>
+                <a href="#settings" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    الإعدادات
+                </a>
+            </nav>
+        </aside>
+
+        <!-- المحتوى الرئيسي -->
+        <main class="dashboard-content">
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">لوحة التحكم</h1>
+                <div class="header-actions">
+                    <button class="btn-notification">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count">3</span>
+                    </button>
+                    <button class="btn-logout" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        تسجيل الخروج
+                    </button>
+                </div>
+            </div>
+
+            <!-- بطاقات الإحصائيات -->
+            <div class="stats-grid">
+                <div class="stat-card revenue">
+                    <h5>الإيرادات الشهرية</h5>
+                    <h3>٥٠,٠٠٠ ج.م</h3>
+                    <span class="trend up">+15%</span>
+                </div>
+                <div class="stat-card students">
+                    <h5>الطلاب النشطين</h5>
+                    <h3>١,٢٥٠</h3>
+                    <span class="trend up">+8%</span>
+                </div>
+                <div class="stat-card courses">
+                    <h5>الفيديوهات المرفوعة</h5>
+                    <h3>٥٠٠+</h3>
+                    <span class="trend up">+12%</span>
+                </div>
+            </div>
+
+            <!-- قسم إدارة الفيديوهات -->
+            <section class="videos-section">
+                <div class="section-header">
+                    <h2>إدارة الفيديوهات</h2>
+                    <button class="btn-upload" onclick="openUploadModal()">
+                        <i class="fas fa-upload"></i>
+                        رفع فيديو جديد
+                    </button>
+                </div>
+
+                <div class="videos-grid">
+                    <!-- فيديو 1 -->
+                    <div class="video-item">
+                        <div class="video-thumbnail">
+                            <i class="fas fa-play-circle"></i>
+                        </div>
+                        <div class="video-info">
+                            <h4 class="video-title">القواعد الأساسية - أولى ثانوي</h4>
+                            <div class="video-meta">
+                                <span>٢٥٠ مشاهد</span>
+                                <span>١٥ تعليق</span>
+                            </div>
+                            <div class="video-actions">
+                                <button class="btn-action btn-edit">
+                                    <i class="fas fa-edit"></i>
+                                    تعديل
+                                </button>
+                                <button class="btn-action btn-delete">
+                                    <i class="fas fa-trash"></i>
+                                    حذف
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- فيديو 2 -->
+                    <div class="video-item">
+                        <div class="video-thumbnail">
+                            <i class="fas fa-play-circle"></i>
+                        </div>
+                        <div class="video-info">
+                            <h4 class="video-title">الزمن الماضي - ثانية ثانوي</h4>
+                            <div class="video-meta">
+                                <span>٣٨٠ مشاهد</span>
+                                <span>٢٢ تعليق</span>
+                            </div>
+                            <div class="video-actions">
+                                <button class="btn-action btn-edit">
+                                    <i class="fas fa-edit"></i>
+                                    تعديل
+                                </button>
+                                <button class="btn-action btn-delete">
+                                    <i class="fas fa-trash"></i>
+                                    حذف
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- قسم الإشعارات -->
+            <section class="notifications-section">
+                <div class="section-header">
+                    <h2>الإشعارات الأخيرة</h2>
+                    <button class="btn-primary" onclick="sendNotification()">
+                        <i class="fas fa-bell"></i>
+                        إرسال إشعار
+                    </button>
+                </div>
+
+                <div class="notifications-list">
+                    <div class="notification-item">
+                        <div class="notification-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="notification-content">
+                            <p>طالب جديد انضم إلى دورة ثالثة ثانوي</p>
+                            <span>منذ ٢ ساعة</span>
+                        </div>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <div class="notification-content">
+                            <p>تم تجديد اشتراك أحمد محمد بنجاح</p>
+                            <span>منذ ٥ ساعات</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- موديل رفع الفيديو -->
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeUploadModal()">&times;</span>
+            <h2>رفع فيديو جديد</h2>
+            <form id="uploadForm" class="upload-form">
+                <div class="form-group">
+                    <label for="videoTitle">عنوان الفيديو</label>
+                    <input type="text" id="videoTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="videoGrade">المرحلة التعليمية</label>
+                    <select id="videoGrade" required>
+                        <option value="">اختر المرحلة</option>
+                        <option value="first">أولى ثانوي</option>
+                        <option value="second">ثانية ثانوي</option>
+                        <option value="third">ثالثة ثانوي</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="videoFile">رفع الفيديو</label>
+                    <input type="file" id="videoFile" accept="video/*" required>
+                </div>
+                <div class="form-group">
+                    <label for="videoDescription">وصف الفيديو</label>
+                    <textarea id="videoDescription" rows="4"></textarea>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-upload"></i>
+                    رفع الفيديو
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/videos.js"></script>
+</body>
+</html>

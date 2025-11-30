@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة الطالب - THE MASTER</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- الشريط الجانبي -->
+        <aside class="sidebar">
+            <div class="profile-section">
+                <div class="avatar student">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <h4 id="studentName">أحمد محمد</h4>
+                <p>طالب - أولى ثانوي</p>
+                <div class="subscription-status active">
+                    <i class="fas fa-crown"></i>
+                    مشترك نشط
+                </div>
+            </div>
+
+            <nav class="dashboard-nav">
+                <a href="#my-courses" class="nav-item active">
+                    <i class="fas fa-play-circle"></i>
+                    دوراتي
+                </a>
+                <a href="#progress" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    تقدمي
+                </a>
+                <a href="#videos" class="nav-item">
+                    <i class="fas fa-video"></i>
+                    الفيديوهات
+                </a>
+                <a href="#subscription" class="nav-item">
+                    <i class="fas fa-credit-card"></i>
+                    الاشتراك
+                </a>
+                <a href="#notifications" class="nav-item">
+                    <i class="fas fa-bell"></i>
+                    الإشعارات
+                </a>
+            </nav>
+        </aside>
+
+        <!-- المحتوى الرئيسي -->
+        <main class="dashboard-content">
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">مرحباً بعودتك!</h1>
+                <div class="header-actions">
+                    <button class="btn-notification">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count">2</span>
+                    </button>
+                    <button class="btn-logout" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        تسجيل الخروج
+                    </button>
+                </div>
+            </div>
+
+            <!-- تقدم الطالب -->
+            <div class="progress-section">
+                <div class="progress-card">
+                    <h3>تقدمك في الدورة</h3>
+                    <div class="progress-bar large">
+                        <div class="progress" style="width: 65%"></div>
+                    </div>
+                    <div class="progress-stats">
+                        <span>٦٥% مكتمل</span>
+                        <span>١٣/٢٠ درس</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الفيديوهات الحديثة -->
+            <section class="videos-section">
+                <div class="section-header">
+                    <h2>آخر الفيديوهات</h2>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active">الكل</button>
+                        <button class="filter-btn">غير المشاهد</button>
+                        <button class="filter-btn">المكتمل</button>
+                    </div>
+                </div>
+
+                <div class="videos-grid">
+                    <!-- فيديو 1 -->
+                    <div class="video-item">
+                        <div class="video-thumbnail">
+                            <i class="fas fa-play-circle"></i>
+                            <div class="video-duration">٢٥:١٥</div>
+                        </div>
+                        <div class="video-info">
+                            <h4 class="video-title">الزمن المضارع البسيط</h4>
+                            <p class="video-description">شرح شامل للزمن المضارع البسيط مع أمثلة تطبيقية</p>
+                            <div class="video-meta">
+                                <span><i class="fas fa-clock"></i> ٢٥ دقيقة</span>
+                                <span><i class="fas fa-eye"></i> ٢٥٠ مشاهد</span>
+                            </div>
+                            <div class="video-progress">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 100%"></div>
+                                </div>
+                                <span>مكتمل</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- فيديو 2 -->
+                    <div class="video-item">
+                        <div class="video-thumbnail">
+                            <i class="fas fa-play-circle"></i>
+                            <div class="video-duration">٣٠:٤٥</div>
+                        </div>
+                        <div class="video-info">
+                            <h4 class="video-title">أدوات التعريف والنكرة</h4>
+                            <p class="video-description">فهم أدوات التعريف a, an, the واستخداماتها</p>
+                            <div class="video-meta">
+                                <span><i class="fas fa-clock"></i> ٣٠ دقيقة</span>
+                                <span><i class="fas fa-eye"></i> ١٨٠ مشاهد</span>
+                            </div>
+                            <div class="video-progress">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 0%"></div>
+                                </div>
+                                <span>غير مشاهد</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- الإشعارات -->
+            <section class="notifications-section">
+                <h2>الإشعارات المهمة</h2>
+                <div class="notifications-list">
+                    <div class="notification-item important">
+                        <div class="notification-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <div class="notification-content">
+                            <h4>اختبار دوري قريب</h4>
+                            <p>الاختبار الدوري للوحدة الأولى يوم السبت القادم</p>
+                            <span>منذ ١ يوم</span>
+                        </div>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div class="notification-content">
+                            <h4>فيديو جديد</h4>
+                            <p>تم إضافة فيديو جديد في دورة القواعد المتقدمة</p>
+                            <span>منذ ٣ أيام</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
