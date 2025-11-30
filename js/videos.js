@@ -57,7 +57,6 @@ function validateVideoUpload(data) {
 
 // رفع الفيديو
 function uploadVideo(data) {
-    // في التطبيق الحقيقي، هنا سيتم رفع الملف إلى الخادم
     showNotification('جاري رفع الفيديو...', 'info');
     
     // محاكاة الرفع
@@ -69,19 +68,28 @@ function uploadVideo(data) {
             title: data.title,
             description: data.description,
             grade: data.grade,
-            duration: '00:00', // سيتم حسابها من الملف
+            duration: '00:00',
             views: 0,
-            comments: 0,
             uploadDate: new Date().toISOString(),
-            fileName: data.file.name
+            fileName: data.file.name,
+            fileSize: (data.file.size / (1024 * 1024)).toFixed(2) + ' MB'
         };
         
-        videos.push(newVideo);
+        videos.unshift(newVideo); // إضافة في البداية
         localStorage.setItem('videos', JSON.stringify(videos));
         
         // إغلاق الموديل وإعادة التحميل
         closeUploadModal();
-        displayVideos(videos);
+        
+        // إعادة تحميل الفيديوهات في الصفحة
+        if (typeof displayVideos === 'function') {
+            displayVideos(videos);
+        }
+        
+        if (typeof loadStats === 'function') {
+            loadStats();
+        }
+        
         showNotification('تم رفع الفيديو بنجاح', 'success');
         
         // إعادة تعيين النموذج
@@ -91,7 +99,7 @@ function uploadVideo(data) {
 
 // إنشاء معرف فيديو فريد
 function generateVideoId() {
-    return 'video_' + Math.random().toString(36).substr(2, 9);
+    return 'video_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 }
 
 // تشغيل الفيديو
@@ -100,80 +108,78 @@ function playVideo(videoId) {
     const video = videos.find(v => v.id === videoId);
     
     if (video) {
-        // تحديث التقدم
-        updateVideoProgress(videoId, 100);
+        // زيادة عدد المشاهدات
+        video.views = (video.views || 0) + 1;
+        localStorage.setItem('videos', JSON.stringify(videos));
         
-        // في التطبيق الحقيقي، هنا سيتم فتح مشغل الفيديو
-        showNotification(`جاري تشغيل: ${video.title}`, 'info');
+        // فتح الفيديو في نافذة جديدة
+        window.open(`video-player.html?id=${videoId}`, '_blank');
     }
 }
 
-// تحديث تقدم الفيديو
-function updateVideoProgress(videoId, progress) {
-    const userProgress = JSON.parse(localStorage.getItem('userProgress')) || {};
-    userProgress[videoId] = progress;
-    localStorage.setItem('userProgress', JSON.stringify(userProgress));
-    
-    // تحديث الواجهة
-    const videos = JSON.parse(localStorage.getItem('videos')) || [];
-    displayVideos(videos);
-}
-
-// إدارة التعليقات
-function addComment(videoId, comment) {
+// تحرير الفيديو
+function editVideo(videoId) {
     const videos = JSON.parse(localStorage.getItem('videos')) || [];
     const video = videos.find(v => v.id === videoId);
     
     if (video) {
-        if (!video.comments) {
-            video.comments = [];
+        // تعبئة النموذج ببيانات الفيديو
+        document.getElementById('editVideoTitle').value = video.title;
+        document.getElementById('editVideoGrade').value = video.grade;
+        document.getElementById('editVideoDescription').value = video.description || '';
+        document.getElementById('editVideoId').value = videoId;
+        
+        // فتح موديل التحرير
+        document.getElementById('editVideoModal').style.display = 'block';
+    }
+}
+
+// حفظ التعديلات
+function saveVideoEdit(e) {
+    e.preventDefault();
+    
+    const videoId = document.getElementById('editVideoId').value;
+    const updatedData = {
+        title: document.getElementById('editVideoTitle').value,
+        grade: document.getElementById('editVideoGrade').value,
+        description: document.getElementById('editVideoDescription').value
+    };
+    
+    const videos = JSON.parse(localStorage.getItem('videos')) || [];
+    const videoIndex = videos.findIndex(v => v.id === videoId);
+    
+    if (videoIndex !== -1) {
+        videos[videoIndex] = { ...videos[videoIndex], ...updatedData };
+        localStorage.setItem('videos', JSON.stringify(videos));
+        
+        showNotification('تم تحديث الفيديو بنجاح', 'success');
+        closeEditVideoModal();
+        
+        if (typeof displayVideos === 'function') {
+            displayVideos(videos);
+        }
+    }
+}
+
+// حذف الفيديو
+function deleteVideo(videoId) {
+    if (confirm('هل أنت متأكد من حذف هذا الفيديو؟')) {
+        const videos = JSON.parse(localStorage.getItem('videos')) || [];
+        const updatedVideos = videos.filter(video => video.id !== videoId);
+        localStorage.setItem('videos', JSON.stringify(updatedVideos));
+        
+        showNotification('تم حذف الفيديو بنجاح', 'success');
+        
+        if (typeof displayVideos === 'function') {
+            displayVideos(updatedVideos);
         }
         
-        const newComment = {
-            id: generateId(),
-            userId: JSON.parse(localStorage.getItem('currentUser')).id,
-            userName: JSON.parse(localStorage.getItem('currentUser')).fullName,
-            comment: comment,
-            timestamp: new Date().toISOString()
-        };
-        
-        video.comments.push(newComment);
-        video.commentsCount = video.comments.length;
-        
-        localStorage.setItem('videos', JSON.stringify(videos));
-        displayVideos(videos);
-        
-        showNotification('تم إضافة التعليق بنجاح', 'success');
+        if (typeof loadStats === 'function') {
+            loadStats();
+        }
     }
 }
 
-// البحث في الفيديوهات
-function searchVideos(query) {
-    const videos = JSON.parse(localStorage.getItem('videos')) || [];
-    const filteredVideos = videos.filter(video => 
-        video.title.toLowerCase().includes(query.toLowerCase()) ||
-        video.description.toLowerCase().includes(query.toLowerCase())
-    );
-    
-    displayVideos(filteredVideos);
-}
-
-// ترتيب الفيديوهات
-function sortVideos(criteria) {
-    const videos = JSON.parse(localStorage.getItem('videos')) || [];
-    let sortedVideos = [...videos];
-    
-    switch(criteria) {
-        case 'date':
-            sortedVideos.sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate));
-            break;
-        case 'views':
-            sortedVideos.sort((a, b) => b.views - a.views);
-            break;
-        case 'title':
-            sortedVideos.sort((a, b) => a.title.localeCompare(b.title));
-            break;
-    }
-    
-    displayVideos(sortedVideos);
+function closeEditVideoModal() {
+    document.getElementById('editVideoModal').style.display = 'none';
 }

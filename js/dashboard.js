@@ -9,14 +9,27 @@ document.addEventListener('DOMContentLoaded', function() {
         
         initDashboard();
         loadDashboardData();
+        setupEventListeners();
     }
 });
+
+function setupEventListeners() {
+    // إضافة مستخدم جديد (أدمن)
+    const addAdminForm = document.getElementById('addAdminForm');
+    if (addAdminForm) {
+        addAdminForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            addNewAdmin();
+        });
+    }
+}
 
 // تحميل بيانات لوحة التحكم
 function loadDashboardData() {
     loadStats();
     loadVideos();
     loadStudents();
+    loadAdmins();
 }
 
 // تحميل الإحصائيات
@@ -29,11 +42,13 @@ function loadStats() {
         user.role === 'student' && user.subscription.status === 'active'
     ).length;
     const totalVideos = videos.length;
+    const totalAdmins = users.filter(user => user.role === 'admin').length;
     
     // تحديث واجهة المستخدم
     document.getElementById('totalStudents').textContent = totalStudents;
     document.getElementById('activeSubscriptions').textContent = activeSubscriptions;
     document.getElementById('totalVideos').textContent = totalVideos;
+    document.getElementById('totalAdmins').textContent = totalAdmins;
 }
 
 // تحميل الفيديوهات
@@ -58,7 +73,7 @@ function displayVideos(videos) {
     
     videosGrid.innerHTML = videos.map(video => `
         <div class="video-item">
-            <div class="video-thumbnail">
+            <div class="video-thumbnail" style="background: linear-gradient(135deg, ${getGradeColor(video.grade)})">
                 <i class="fas fa-play-circle"></i>
                 ${video.duration ? `<div class="video-duration">${video.duration}</div>` : ''}
             </div>
@@ -66,8 +81,8 @@ function displayVideos(videos) {
                 <h4 class="video-title">${video.title}</h4>
                 ${video.description ? `<p class="video-description">${video.description}</p>` : ''}
                 <div class="video-meta">
-                    <span>${getGradeName(video.grade)}</span>
-                    ${video.views ? `<span><i class="fas fa-eye"></i> ${video.views} مشاهد</span>` : ''}
+                    <span class="grade-badge ${video.grade}">${getGradeName(video.grade)}</span>
+                    <span><i class="fas fa-calendar"></i> ${formatDate(video.uploadDate)}</span>
                 </div>
                 <div class="video-actions">
                     <button class="btn-action btn-edit" onclick="editVideo('${video.id}')">
@@ -113,26 +128,159 @@ function displayStudents(students) {
             <div class="student-info">
                 <h4>${student.fullName}</h4>
                 <p>${student.email}</p>
-                <span class="student-grade">${getGradeName(student.grade)}</span>
-                <span class="subscription-status ${student.subscription.status}">
-                    ${student.subscription.status === 'active' ? 'نشط' : 'غير نشط'}
-                </span>
+                <div class="student-details">
+                    <span class="student-grade">${getGradeName(student.grade)}</span>
+                    <span class="subscription-status ${student.subscription.status}">
+                        ${student.subscription.status === 'active' ? 'نشط' : 'غير نشط'}
+                    </span>
+                </div>
+                <small>مسجل منذ: ${formatDate(student.createdAt)}</small>
             </div>
             <div class="student-actions">
-                <button class="btn-action" onclick="viewStudent('${student.id}')">
-                    <i class="fas fa-eye"></i>
-                    عرض
+                <button class="btn-action btn-edit" onclick="toggleSubscription('${student.id}')">
+                    <i class="fas ${student.subscription.status === 'active' ? 'fa-pause' : 'fa-play'}"></i>
+                    ${student.subscription.status === 'active' ? 'إيقاف' : 'تفعيل'}
+                </button>
+                <button class="btn-action btn-delete" onclick="deleteStudent('${student.id}')">
+                    <i class="fas fa-trash"></i>
+                    حذف
                 </button>
             </div>
         </div>
     `).join('');
 }
 
-function getGradeName(grade) {
-    const grades = {
-        'first': 'أولى ثانوي',
-        'second': 'ثانية ثانوي',
-        'third': 'ثالثة ثانوي'
+// تحميل الأدمنز
+function loadAdmins() {
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const admins = users.filter(user => user.role === 'admin');
+    displayAdmins(admins);
+}
+
+function displayAdmins(admins) {
+    const adminsList = document.getElementById('adminsList');
+    if (!adminsList) return;
+    
+    adminsList.innerHTML = admins.map(admin => `
+        <div class="admin-item">
+            <div class="admin-avatar">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <div class="admin-info">
+                <h4>${admin.fullName}</h4>
+                <p>${admin.email}</p>
+                <small>مسجل منذ: ${formatDate(admin.createdAt)}</small>
+            </div>
+            ${admin.id !== JSON.parse(localStorage.getItem('currentUser')).id ? `
+            <div class="admin-actions">
+                <button class="btn-action btn-delete" onclick="deleteAdmin('${admin.id}')">
+                    <i class="fas fa-trash"></i>
+                    حذف
+                </button>
+            </div>
+            ` : '<span class="current-user">أنت</span>'}
+        </div>
+    `).join('');
+}
+
+// إضافة أدمن جديد
+function addNewAdmin() {
+    const formData = {
+        fullName: document.getElementById('adminName').value,
+        email: document.getElementById('adminEmail').value,
+        password: document.getElementById('adminPassword').value
     };
-    return grades[grade] || 'غير محدد';
+    
+    if (!formData.fullName || !formData.email || !formData.password) {
+        showNotification('الرجاء ملء جميع الحقول', 'error');
+        return;
+    }
+    
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    
+    // التحقق من عدم وجود مستخدم بنفس البريد
+    if (users.find(user => user.email === formData.email)) {
+        showNotification('هذا البريد الإلكتروني مسجل بالفعل', 'error');
+        return;
+    }
+    
+    const newAdmin = {
+        id: 'admin_' + Date.now(),
+        ...formData,
+        role: 'admin',
+        createdAt: new Date().toISOString(),
+        subscription: { status: 'active' }
+    };
+    
+    users.push(newAdmin);
+    localStorage.setItem('users', JSON.stringify(users));
+    
+    showNotification('تم إضافة الأدمن بنجاح', 'success');
+    document.getElementById('addAdminForm').reset();
+    closeAddAdminModal();
+    loadAdmins();
+    loadStats();
+}
+
+// تفعيل/إيقاف اشتراك طالب
+function toggleSubscription(studentId) {
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const userIndex = users.findIndex(user => user.id === studentId);
+    
+    if (userIndex !== -1) {
+        users[userIndex].subscription.status = 
+            users[userIndex].subscription.status === 'active' ? 'inactive' : 'active';
+        
+        localStorage.setItem('users', JSON.stringify(users));
+        showNotification('تم تحديث حالة الاشتراك', 'success');
+        loadStudents();
+        loadStats();
+    }
+}
+
+// حذف طالب
+function deleteStudent(studentId) {
+    if (confirm('هل أنت متأكد من حذف هذا الطالب؟')) {
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const updatedUsers = users.filter(user => user.id !== studentId);
+        localStorage.setItem('users', JSON.stringify(updatedUsers));
+        showNotification('تم حذف الطالب بنجاح', 'success');
+        loadStudents();
+        loadStats();
+    }
+}
+
+// حذف أدمن
+function deleteAdmin(adminId) {
+    if (confirm('هل أنت متأكد من حذف هذا الأدمن؟')) {
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const updatedUsers = users.filter(user => user.id !== adminId);
+        localStorage.setItem('users', JSON.stringify(updatedUsers));
+        showNotification('تم حذف الأدمن بنجاح', 'success');
+        loadAdmins();
+        loadStats();
+    }
+}
+
+// دوال مساعدة
+function getGradeColor(grade) {
+    const colors = {
+        'first': '#4caf50, #81c784',
+        'second': '#2196f3, #64b5f6',
+        'third': '#ff9800, #ffb74d'
+    };
+    return colors[grade] || '#1a237e, #534bae';
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ar-EG');
+}
+
+function openAddAdminModal() {
+    document.getElementById('addAdminModal').style.display = 'block';
+}
+
+function closeAddAdminModal() {
+    document.getElementById('addAdminModal').style.display = 'none';
 }
