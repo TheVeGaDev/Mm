@@ -5,6 +5,9 @@ class StorageManager {
     }
 
     init() {
+        // إنشاء مستخدم الأدمن الافتراضي إذا لم يكن موجوداً
+        this.createDefaultAdmin();
+        
         // تهيئة الهياكل الأساسية إذا لم تكن موجودة
         const structures = {
             'users': [],
@@ -19,6 +22,34 @@ class StorageManager {
             if (!localStorage.getItem(key)) {
                 localStorage.setItem(key, JSON.stringify(defaultValue));
             }
+        }
+    }
+
+    createDefaultAdmin() {
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const adminExists = users.find(user => user.role === 'admin');
+        
+        if (!adminExists) {
+            const defaultAdmin = {
+                id: 'admin_001',
+                fullName: 'مدير النظام',
+                email: 'admin@themaster.com',
+                password: 'admin123', // في التطبيق الحقيقي يجب تشفير كلمة المرور
+                role: 'admin',
+                createdAt: new Date().toISOString(),
+                subscription: {
+                    status: 'active',
+                    plan: 'premium',
+                    startDate: new Date().toISOString(),
+                    endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+                    features: ['جميع الصلاحيات']
+                },
+                phone: '01000000000'
+            };
+            
+            users.push(defaultAdmin);
+            localStorage.setItem('users', JSON.stringify(users));
+            console.log('✅ تم إنشاء مستخدم الأدمن الافتراضي');
         }
     }
 

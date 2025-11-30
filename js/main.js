@@ -18,6 +18,9 @@ function initApp() {
     
     // تهيئة الموديلات
     initModals();
+    
+    // إنشاء فيديوهات تجريبية للتجربة
+    createSampleVideos();
 }
 
 // القائمة المتنقلة
@@ -120,51 +123,13 @@ function scrollToCourses() {
     }
 }
 
-// فتح وإغلاق الموديلات
-function openLoginModal() {
-    closeRegisterModal();
-    const modal = document.getElementById('loginModal');
-    if (modal) {
-        modal.style.display = 'block';
-    }
-}
-
-function closeLoginModal() {
-    const modal = document.getElementById('loginModal');
-    if (modal) {
-        modal.style.display = 'none';
-    }
-}
-
-function openRegisterModal() {
-    closeLoginModal();
-    const modal = document.getElementById('registerModal');
-    if (modal) {
-        modal.style.display = 'block';
-    }
-}
-
-function closeRegisterModal() {
-    const modal = document.getElementById('registerModal');
-    if (modal) {
-        modal.style.display = 'none';
-    }
-}
-
-function switchToLogin() {
-    closeRegisterModal();
-    openLoginModal();
-}
-
-function switchToRegister() {
-    closeLoginModal();
-    openRegisterModal();
-}
-
 // تسجيل الخروج
 function logout() {
     storage.setCurrentUser(null);
-    window.location.href = 'index.html';
+    showNotification('تم تسجيل الخروج بنجاح', 'success');
+    setTimeout(() => {
+        window.location.href = 'index.html';
+    }, 1000);
 }
 
 // التحقق من حالة تسجيل الدخول
@@ -312,4 +277,49 @@ function formatDate(dateString) {
 function checkPermission(requiredRole) {
     const currentUser = storage.getCurrentUser();
     return currentUser && currentUser.role === requiredRole;
+}
+
+// إنشاء فيديوهات تجريبية
+function createSampleVideos() {
+    const videos = storage.getVideos();
+    if (videos.length === 0) {
+        const sampleVideos = [
+            {
+                id: 'video_1',
+                title: 'المبتدئ في القواعد الإنجليزية',
+                description: 'شرح أساسيات القواعد الإنجليزية للمبتدئين',
+                grade: 'first',
+                duration: '15:30',
+                views: 0,
+                uploadDate: new Date().toISOString(),
+                fileName: 'beginner-grammar.mp4'
+            },
+            {
+                id: 'video_2',
+                title: 'تحليل النصوص الأدبية',
+                description: 'كيفية تحليل وفهم النصوص الأدبية المعقدة',
+                grade: 'second',
+                duration: '22:45',
+                views: 0,
+                uploadDate: new Date().toISOString(),
+                fileName: 'literary-analysis.mp4'
+            },
+            {
+                id: 'video_3',
+                title: 'إستراتيجيات امتحان الثانوية',
+                description: 'أفضل الطرق والاستراتيجيات لاجتياز امتحان الثانوية',
+                grade: 'third',
+                duration: '30:15',
+                views: 0,
+                uploadDate: new Date().toISOString(),
+                fileName: 'exam-strategies.mp4'
+            }
+        ];
+
+        sampleVideos.forEach(video => {
+            storage.saveVideo(video);
+        });
+        
+        console.log('✅ تم إنشاء فيديوهات تجريبية');
+    }
 }

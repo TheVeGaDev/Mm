@@ -13,6 +13,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+function initDashboard() {
+    const currentUser = storage.getCurrentUser();
+    if (currentUser) {
+        document.getElementById('adminName').textContent = currentUser.fullName;
+    }
+}
+
 function setupEventListeners() {
     // إضافة مستخدم جديد (أدمن)
     const addAdminForm = document.getElementById('addAdminForm');
@@ -34,12 +41,12 @@ function loadDashboardData() {
 
 // تحميل الإحصائيات
 function loadStats() {
-    const users = JSON.parse(localStorage.getItem('users')) || [];
-    const videos = JSON.parse(localStorage.getItem('videos')) || [];
+    const users = storage.getUsers();
+    const videos = storage.getVideos();
     
     const totalStudents = users.filter(user => user.role === 'student').length;
     const activeSubscriptions = users.filter(user => 
-        user.role === 'student' && user.subscription.status === 'active'
+        user.role === 'student' && user.subscription && user.subscription.status === 'active'
     ).length;
     const totalVideos = videos.length;
     const totalAdmins = users.filter(user => user.role === 'admin').length;
@@ -53,7 +60,7 @@ function loadStats() {
 
 // تحميل الفيديوهات
 function loadVideos() {
-    const videos = JSON.parse(localStorage.getItem('videos')) || [];
+    const videos = storage.getVideos();
     displayVideos(videos);
 }
 
@@ -101,7 +108,7 @@ function displayVideos(videos) {
 
 // تحميل الطلاب
 function loadStudents() {
-    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const users = storage.getUsers();
     const students = users.filter(user => user.role === 'student');
     displayStudents(students);
 }
@@ -130,16 +137,16 @@ function displayStudents(students) {
                 <p>${student.email}</p>
                 <div class="student-details">
                     <span class="student-grade">${getGradeName(student.grade)}</span>
-                    <span class="subscription-status ${student.subscription.status}">
-                        ${student.subscription.status === 'active' ? 'نشط' : 'غير نشط'}
+                    <span class="subscription-status ${student.subscription?.status || 'inactive'}">
+                        ${student.subscription?.status === 'active' ? 'نشط' : 'غير نشط'}
                     </span>
                 </div>
                 <small>مسجل منذ: ${formatDate(student.createdAt)}</small>
             </div>
             <div class="student-actions">
                 <button class="btn-action btn-edit" onclick="toggleSubscription('${student.id}')">
-                    <i class="fas ${student.subscription.status === 'active' ? 'fa-pause' : 'fa-play'}"></i>
-                    ${student.subscription.status === 'active' ? 'إيقاف' : 'تفعيل'}
+                    <i class="fas ${student.subscription?.status === 'active' ? 'fa-pause' : 'fa-play'}"></i>
+                    ${student.subscription?.status === 'active' ? 'إيقاف' : 'تفعيل'}
                 </button>
                 <button class="btn-action btn-delete" onclick="deleteStudent('${student.id}')">
                     <i class="fas fa-trash"></i>
@@ -152,7 +159,7 @@ function displayStudents(students) {
 
 // تحميل الأدمنز
 function loadAdmins() {
-    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const users = storage.getUsers();
     const admins = users.filter(user => user.role === 'admin');
     displayAdmins(admins);
 }
@@ -171,7 +178,7 @@ function displayAdmins(admins) {
                 <p>${admin.email}</p>
                 <small>مسجل منذ: ${formatDate(admin.createdAt)}</small>
             </div>
-            ${admin.id !== JSON.parse(localStorage.getItem('currentUser')).id ? `
+            ${admin.id !== storage.getCurrentUser().id ? `
             <div class="admin-actions">
                 <button class="btn-action btn-delete" onclick="deleteAdmin('${admin.id}')">
                     <i class="fas fa-trash"></i>
@@ -196,7 +203,7 @@ function addNewAdmin() {
         return;
     }
     
-    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const users = storage.getUsers();
     
     // التحقق من عدم وجود مستخدم بنفس البريد
     if (users.find(user => user.email === formData.email)) {
@@ -224,10 +231,14 @@ function addNewAdmin() {
 
 // تفعيل/إيقاف اشتراك طالب
 function toggleSubscription(studentId) {
-    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const users = storage.getUsers();
     const userIndex = users.findIndex(user => user.id === studentId);
     
     if (userIndex !== -1) {
+        if (!users[userIndex].subscription) {
+            users[userIndex].subscription = { status: 'inactive' };
+        }
+        
         users[userIndex].subscription.status = 
             users[userIndex].subscription.status === 'active' ? 'inactive' : 'active';
         
@@ -241,7 +252,7 @@ function toggleSubscription(studentId) {
 // حذف طالب
 function deleteStudent(studentId) {
     if (confirm('هل أنت متأكد من حذف هذا الطالب؟')) {
-        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const users = storage.getUsers();
         const updatedUsers = users.filter(user => user.id !== studentId);
         localStorage.setItem('users', JSON.stringify(updatedUsers));
         showNotification('تم حذف الطالب بنجاح', 'success');
@@ -253,7 +264,7 @@ function deleteStudent(studentId) {
 // حذف أدمن
 function deleteAdmin(adminId) {
     if (confirm('هل أنت متأكد من حذف هذا الأدمن؟')) {
-        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const users = storage.getUsers();
         const updatedUsers = users.filter(user => user.id !== adminId);
         localStorage.setItem('users', JSON.stringify(updatedUsers));
         showNotification('تم حذف الأدمن بنجاح', 'success');
@@ -269,10 +280,11 @@ function getGradeColor(grade) {
         'second': '#2196f3, #64b5f6',
         'third': '#ff9800, #ffb74d'
     };
-    return colors[grade] || '#1a237e, #534bae';
+    return colors[grade] || '#d32f2f, #f44336';
 }
 
 function formatDate(dateString) {
+    if (!dateString) return 'غير محدد';
     const date = new Date(dateString);
     return date.toLocaleDateString('ar-EG');
 }
@@ -283,4 +295,12 @@ function openAddAdminModal() {
 
 function closeAddAdminModal() {
     document.getElementById('addAdminModal').style.display = 'none';
+}
+
+function openUploadModal() {
+    document.getElementById('uploadModal').style.display = 'block';
+}
+
+function closeUploadModal() {
+    document.getElementById('uploadModal').style.display = 'none';
 }
