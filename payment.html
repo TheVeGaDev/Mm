@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إتمام الدفع - THE MASTER</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="payment-container">
+        <div class="payment-card">
+            <div class="payment-header">
+                <h1><i class="fas fa-lock"></i> إتمام عملية الدفع</h1>
+                <p>اختر طريقة الدفع المناسبة لك</p>
+            </div>
+
+            <div class="plan-details">
+                <h3 id="planName">الباقة الأساسية</h3>
+                <div class="price" id="planPrice">500 جنيه</div>
+                <div class="plan-features" id="planFeatures">
+                    <!-- سيتم تعبئة الميزات ديناميكياً -->
+                </div>
+            </div>
+
+            <div class="payment-methods">
+                <div class="method active" data-method="vodafone_cash">
+                    <i class="fas fa-mobile-alt"></i>
+                    <span>فودافون كاش</span>
+                </div>
+                <div class="method" data-method="etisalat_cash">
+                    <i class="fas fa-mobile-alt"></i>
+                    <span>اتصالات كاش</span>
+                </div>
+                <div class="method" data-method="orange_cash">
+                    <i class="fas fa-mobile-alt"></i>
+                    <span>اورانج كاش</span>
+                </div>
+                <div class="method" data-method="bank_transfer">
+                    <i class="fas fa-university"></i>
+                    <span>تحويل بنكي</span>
+                </div>
+            </div>
+
+            <div class="payment-info" id="paymentInfo">
+                <div class="info-card vodafone">
+                    <h4>الدفع عبر فودافون كاش</h4>
+                    <div class="phone-number">
+                        <strong>01012345678</strong>
+                        <button class="btn-copy" onclick="copyNumber('01012345678')">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                    <p>قم بإرسال المبلغ إلى هذا الرقم ثم أدخل كود التحقق أدناه</p>
+                </div>
+            </div>
+
+            <form id="paymentForm" class="payment-form">
+                <div class="form-group">
+                    <label for="transactionCode">كود التحقق</label>
+                    <input type="text" id="transactionCode" required 
+                           placeholder="أدخل الكود المرسل لك">
+                </div>
+                <div class="form-group">
+                    <label for="paymentProof">صورة إثبات الدفع (اختياري)</label>
+                    <input type="file" id="paymentProof" accept="image/*">
+                </div>
+                
+                <button type="submit" class="btn-pay">
+                    <i class="fas fa-check-circle"></i>
+                    تأكيد الدفع
+                </button>
+            </form>
+
+            <div class="payment-security">
+                <i class="fas fa-shield-alt"></i>
+                <span>عملية دفع آمنة ومشفرة</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/payment.js"></script>
+</body>
+</html>
