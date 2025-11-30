@@ -11,10 +11,15 @@
     .hero-content {
         padding: 0 15px;
         flex-direction: column;
+        text-align: center;
     }
     
     .hero-section {
         padding: 100px 0 60px;
+    }
+    
+    .hero-text h2 {
+        font-size: 2.5rem;
     }
     
     .grades-section {
@@ -114,6 +119,44 @@
         margin-right: 0;
         grid-column: 1;
         margin-top: 80px;
+    }
+    
+    /* هامبورجر مينو */
+    .hamburger {
+        display: flex;
+    }
+    
+    .nav-menu {
+        position: fixed;
+        left: -100%;
+        top: 70px;
+        flex-direction: column;
+        background-color: var(--primary-color);
+        width: 100%;
+        text-align: center;
+        transition: 0.3s;
+        box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+        padding: 2rem 0;
+    }
+    
+    .nav-menu.active {
+        left: 0;
+    }
+    
+    .nav-menu li {
+        margin: 1.5rem 0;
+    }
+    
+    .hamburger.active span:nth-child(1) {
+        transform: rotate(-45deg) translate(-5px, 6px);
+    }
+    
+    .hamburger.active span:nth-child(2) {
+        opacity: 0;
+    }
+    
+    .hamburger.active span:nth-child(3) {
+        transform: rotate(45deg) translate(-5px, -6px);
     }
 }
 
@@ -228,50 +271,12 @@
 .card-back ul {
     text-align: right;
     margin: 1rem 0;
+    list-style: none;
 }
 
 .card-back li {
     margin-bottom: 0.5rem;
-}
-
-/* تحسينات القائمة المتنقلة */
-.hamburger {
-    display: none;
-    flex-direction: column;
-    cursor: pointer;
-}
-
-.hamburger span {
-    width: 25px;
-    height: 3px;
-    background: white;
-    margin: 3px 0;
-    transition: 0.3s;
-}
-
-@media (max-width: 768px) {
-    .hamburger {
-        display: flex;
-    }
-    
-    .nav-menu {
-        position: fixed;
-        left: -100%;
-        top: 70px;
-        flex-direction: column;
-        background-color: var(--primary-color);
-        width: 100%;
-        text-align: center;
-        transition: 0.3s;
-        box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
-        padding: 2rem 0;
-    }
-    
-    .nav-menu.active {
-        left: 0;
-    }
-    
-    .nav-menu li {
-        margin: 1.5rem 0;
-    }
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
