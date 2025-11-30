@@ -17,8 +17,8 @@
                 <div class="avatar">
                     <i class="fas fa-user-tie"></i>
                 </div>
-                <h4>د. سالم رمضان</h4>
-                <p>مدرس أول اللغة الإنجليزية</p>
+                <h4 id="adminName">مدير النظام</h4>
+                <p>مسؤول المنصة</p>
             </div>
 
             <nav class="dashboard-nav">
@@ -34,18 +34,6 @@
                     <i class="fas fa-users"></i>
                     إدارة الطلاب
                 </a>
-                <a href="#analytics" class="nav-item">
-                    <i class="fas fa-chart-bar"></i>
-                    الإحصائيات
-                </a>
-                <a href="#payments" class="nav-item">
-                    <i class="fas fa-credit-card"></i>
-                    المدفوعات
-                </a>
-                <a href="#notifications" class="nav-item">
-                    <i class="fas fa-bell"></i>
-                    الإشعارات
-                </a>
                 <a href="#settings" class="nav-item">
                     <i class="fas fa-cog"></i>
                     الإعدادات
@@ -58,10 +46,6 @@
             <div class="dashboard-header">
                 <h1 class="dashboard-title">لوحة التحكم</h1>
                 <div class="header-actions">
-                    <button class="btn-notification">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-count">3</span>
-                    </button>
                     <button class="btn-logout" onclick="logout()">
                         <i class="fas fa-sign-out-alt"></i>
                         تسجيل الخروج
@@ -71,20 +55,17 @@
 
             <!-- بطاقات الإحصائيات -->
             <div class="stats-grid">
-                <div class="stat-card revenue">
-                    <h5>الإيرادات الشهرية</h5>
-                    <h3>٥٠,٠٠٠ ج.م</h3>
-                    <span class="trend up">+15%</span>
-                </div>
                 <div class="stat-card students">
-                    <h5>الطلاب النشطين</h5>
-                    <h3>١,٢٥٠</h3>
-                    <span class="trend up">+8%</span>
+                    <h5>إجمالي الطلاب</h5>
+                    <h3 id="totalStudents">0</h3>
                 </div>
                 <div class="stat-card courses">
                     <h5>الفيديوهات المرفوعة</h5>
-                    <h3>٥٠٠+</h3>
-                    <span class="trend up">+12%</span>
+                    <h3 id="totalVideos">0</h3>
+                </div>
+                <div class="stat-card revenue">
+                    <h5>المشتركين النشطين</h5>
+                    <h3 id="activeSubscriptions">0</h3>
                 </div>
             </div>
 
@@ -98,86 +79,18 @@
                     </button>
                 </div>
 
-                <div class="videos-grid">
-                    <!-- فيديو 1 -->
-                    <div class="video-item">
-                        <div class="video-thumbnail">
-                            <i class="fas fa-play-circle"></i>
-                        </div>
-                        <div class="video-info">
-                            <h4 class="video-title">القواعد الأساسية - أولى ثانوي</h4>
-                            <div class="video-meta">
-                                <span>٢٥٠ مشاهد</span>
-                                <span>١٥ تعليق</span>
-                            </div>
-                            <div class="video-actions">
-                                <button class="btn-action btn-edit">
-                                    <i class="fas fa-edit"></i>
-                                    تعديل
-                                </button>
-                                <button class="btn-action btn-delete">
-                                    <i class="fas fa-trash"></i>
-                                    حذف
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- فيديو 2 -->
-                    <div class="video-item">
-                        <div class="video-thumbnail">
-                            <i class="fas fa-play-circle"></i>
-                        </div>
-                        <div class="video-info">
-                            <h4 class="video-title">الزمن الماضي - ثانية ثانوي</h4>
-                            <div class="video-meta">
-                                <span>٣٨٠ مشاهد</span>
-                                <span>٢٢ تعليق</span>
-                            </div>
-                            <div class="video-actions">
-                                <button class="btn-action btn-edit">
-                                    <i class="fas fa-edit"></i>
-                                    تعديل
-                                </button>
-                                <button class="btn-action btn-delete">
-                                    <i class="fas fa-trash"></i>
-                                    حذف
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="videos-grid" id="videosList">
+                    <!-- سيتم تعبئة الفيديوهات ديناميكياً -->
                 </div>
             </section>
 
-            <!-- قسم الإشعارات -->
-            <section class="notifications-section">
+            <!-- قسم إدارة الطلاب -->
+            <section class="videos-section">
                 <div class="section-header">
-                    <h2>الإشعارات الأخيرة</h2>
-                    <button class="btn-primary" onclick="sendNotification()">
-                        <i class="fas fa-bell"></i>
-                        إرسال إشعار
-                    </button>
+                    <h2>إدارة الطلاب</h2>
                 </div>
-
-                <div class="notifications-list">
-                    <div class="notification-item">
-                        <div class="notification-icon">
-                            <i class="fas fa-user-plus"></i>
-                        </div>
-                        <div class="notification-content">
-                            <p>طالب جديد انضم إلى دورة ثالثة ثانوي</p>
-                            <span>منذ ٢ ساعة</span>
-                        </div>
-                    </div>
-                    <div class="notification-item">
-                        <div class="notification-icon">
-                            <i class="fas fa-credit-card"></i>
-                        </div>
-                        <div class="notification-content">
-                            <p>تم تجديد اشتراك أحمد محمد بنجاح</p>
-                            <span>منذ ٥ ساعات</span>
-                        </div>
-                    </div>
+                <div class="students-list" id="studentsList">
+                    <!-- سيتم تعبئة الطلاب ديناميكياً -->
                 </div>
             </section>
         </main>
