@@ -188,3 +188,28 @@ class StorageManager {
 
 // إنشاء نسخة عامة
 const storage = new StorageManager();
+
+// إضافة دوال مساعدة مفقودة
+function getGradeName(grade) {
+    const grades = {
+        'first': 'أولى ثانوي',
+        'second': 'ثانية ثانوي',
+        'third': 'ثالثة ثانوي'
+    };
+    return grades[grade] || 'غير محدد';
+}
+
+function getGradeColor(grade) {
+    const colors = {
+        'first': '#4caf50, #81c784',
+        'second': '#2196f3, #64b5f6',
+        'third': '#ff9800, #ffb74d'
+    };
+    return colors[grade] || '#d32f2f, #f44336';
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'غير محدد';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ar-EG');
+}

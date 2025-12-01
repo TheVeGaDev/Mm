@@ -304,3 +304,39 @@ function openUploadModal() {
 function closeUploadModal() {
     document.getElementById('uploadModal').style.display = 'none';
 }
+
+// دوال مساعدة إضافية
+function getGradeName(grade) {
+    const grades = {
+        'first': 'أولى ثانوي',
+        'second': 'ثانية ثانوي',
+        'third': 'ثالثة ثانوي'
+    };
+    return grades[grade] || 'غير محدد';
+}
+
+function getGradeColor(grade) {
+    const colors = {
+        'first': '#4caf50, #81c784',
+        'second': '#2196f3, #64b5f6',
+        'third': '#ff9800, #ffb74d'
+    };
+    return colors[grade] || '#d32f2f, #f44336';
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'غير محدد';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ar-EG');
+}
+
+// دالة لعرض الإشعارات (لتجنب الأخطاء)
+function showNotification(message, type = 'info') {
+    // استخدام الدالة من main.js إذا كانت موجودة
+    if (typeof window.showNotification === 'function') {
+        window.showNotification(message, type);
+    } else {
+        // تنفيذ بدائي إذا لم تكن الدالة موجودة
+        alert(message);
+    }
+}

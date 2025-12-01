@@ -42,9 +42,22 @@ function handleLogin(e) {
 
 function registerUser(userData) {
     // التحقق من صحة البيانات
-    if (!userData.fullName || !userData.email || !userData.password) {
+    if (!userData.fullName || !userData.email || !userData.password || !userData.studentPhone || !userData.parentPhone || !userData.grade) {
         showNotification('الرجاء ملء جميع الحقول المطلوبة', 'error');
-        return;
+        return false;
+    }
+
+    // التحقق من صحة البريد الإلكتروني
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(userData.email)) {
+        showNotification('الرجاء إدخال بريد إلكتروني صحيح', 'error');
+        return false;
+    }
+
+    // التحقق من قوة كلمة المرور
+    if (userData.password.length < 6) {
+        showNotification('كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'error');
+        return false;
     }
 
     const users = storage.getUsers();
@@ -52,7 +65,7 @@ function registerUser(userData) {
     // التحقق من عدم وجود مستخدم بنفس البريد
     if (users.find(user => user.email === userData.email)) {
         showNotification('هذا البريد الإلكتروني مسجل بالفعل', 'error');
-        return;
+        return false;
     }
     
     const newUser = {
@@ -72,13 +85,16 @@ function registerUser(userData) {
     users.push(newUser);
     localStorage.setItem('users', JSON.stringify(users));
     
+    console.log('تم تسجيل مستخدم جديد:', newUser);
     showNotification('تم إنشاء الحساب بنجاح!', 'success');
     closeRegisterModal();
     
     // تسجيل الدخول تلقائياً
     setTimeout(() => {
-        loginUser(userData);
+        loginUser({ email: userData.email, password: userData.password });
     }, 1000);
+    
+    return true;
 }
 
 function loginUser(credentials) {

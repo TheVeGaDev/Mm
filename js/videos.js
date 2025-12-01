@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function handleVideoUpload(e) {
     e.preventDefault();
+    console.log('بدء رفع الفيديو...');
     
     const formData = {
         title: document.getElementById('videoTitle').value,
@@ -16,13 +17,15 @@ function handleVideoUpload(e) {
         file: document.getElementById('videoFile').files[0]
     };
     
+    console.log('بيانات الفيديو:', formData);
+    
     if (validateVideoUpload(formData)) {
         uploadVideo(formData);
     }
 }
 
 function validateVideoUpload(data) {
-    if (!data.title.trim()) {
+    if (!data.title || !data.title.trim()) {
         showNotification('الرجاء إدخال عنوان الفيديو', 'error');
         return false;
     }
@@ -37,42 +40,69 @@ function validateVideoUpload(data) {
         return false;
     }
     
+    // التحقق من نوع الملف
+    const allowedTypes = ['video/mp4', 'video/avi', 'video/mkv', 'video/mov'];
+    if (!allowedTypes.includes(data.file.type)) {
+        showNotification('الرجاء اختيار ملف فيديو صالح (MP4, AVI, MKV, MOV)', 'error');
+        return false;
+    }
+    
+    // التحقق من حجم الملف (50MB كحد أقصى)
+    const maxSize = 50 * 1024 * 1024; // 50MB
+    if (data.file.size > maxSize) {
+        showNotification('حجم الفيديو يجب أن يكون أقل من 50 ميجابايت', 'error');
+        return false;
+    }
+    
     return true;
 }
 
 function uploadVideo(data) {
     showNotification('جاري رفع الفيديو...', 'info');
+    console.log('بدء عملية الرفع...');
     
-    // محاكاة الرفع
+    // محاكاة الرفع (في التطبيق الحقيقي هنا يتم رفع الملف للسيرفر)
     setTimeout(() => {
-        const videos = storage.getVideos();
-        const newVideo = {
-            id: 'video_' + Date.now(),
-            title: data.title,
-            description: data.description,
-            grade: data.grade,
-            duration: '00:00',
-            views: 0,
-            uploadDate: new Date().toISOString(),
-            fileName: data.file.name,
-            fileSize: (data.file.size / (1024 * 1024)).toFixed(2) + ' MB'
-        };
-        
-        videos.unshift(newVideo);
-        localStorage.setItem('videos', JSON.stringify(videos));
-        
-        closeUploadModal();
-        
-        if (typeof displayVideos === 'function') {
-            displayVideos(videos);
+        try {
+            const videos = storage.getVideos();
+            const newVideo = {
+                id: 'video_' + Date.now(),
+                title: data.title,
+                description: data.description,
+                grade: data.grade,
+                duration: '00:00', // يمكن حساب المدة الحقيقية في التطبيق الحقيقي
+                views: 0,
+                uploadDate: new Date().toISOString(),
+                fileName: data.file.name,
+                fileSize: (data.file.size / (1024 * 1024)).toFixed(2) + ' MB',
+                status: 'active'
+            };
+            
+            console.log('فيديو جديد:', newVideo);
+            
+            videos.unshift(newVideo);
+            localStorage.setItem('videos', JSON.stringify(videos));
+            
+            // إعادة تحميل البيانات
+            if (typeof loadVideos === 'function') {
+                loadVideos();
+            }
+            
+            if (typeof loadStats === 'function') {
+                loadStats();
+            }
+            
+            // إغلاق الموديل وإعادة تعيين النموذج
+            closeUploadModal();
+            document.getElementById('uploadForm').reset();
+            
+            showNotification('تم رفع الفيديو بنجاح', 'success');
+            console.log('تم رفع الفيديو بنجاح');
+            
+        } catch (error) {
+            console.error('خطأ في رفع الفيديو:', error);
+            showNotification('حدث خطأ أثناء رفع الفيديو', 'error');
         }
-        
-        if (typeof loadStats === 'function') {
-            loadStats();
-        }
-        
-        showNotification('تم رفع الفيديو بنجاح', 'success');
-        document.getElementById('uploadForm').reset();
     }, 2000);
 }
 
@@ -110,8 +140,8 @@ function saveVideoEdit(e) {
         showNotification('تم تحديث الفيديو بنجاح', 'success');
         closeEditVideoModal();
         
-        if (typeof displayVideos === 'function') {
-            displayVideos(videos);
+        if (typeof loadVideos === 'function') {
+            loadVideos();
         }
     }
 }
@@ -124,8 +154,8 @@ function deleteVideo(videoId) {
         
         showNotification('تم حذف الفيديو بنجاح', 'success');
         
-        if (typeof displayVideos === 'function') {
-            displayVideos(updatedVideos);
+        if (typeof loadVideos === 'function') {
+            loadVideos();
         }
         
         if (typeof loadStats === 'function') {
@@ -136,4 +166,8 @@ function deleteVideo(videoId) {
 
 function closeEditVideoModal() {
     document.getElementById('editVideoModal').style.display = 'none';
+}
+
+function closeUploadModal() {
+    document.getElementById('uploadModal').style.display = 'none';
 }
